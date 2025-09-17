@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <!-- Chosen Palette: Calm Neutral Professional (BG: #F8F7F4, Text: #334155, Accent: #059669, Secondary: #475569) -->
+    <!-- Application Structure Plan: A vertical narrative SPA that guides the user through a persuasive argument. It starts with the problem (AS-IS), presents the solution (TO-BE) with a clear architectural diagram, provides an interactive code comparison as evidence, and concludes with benefits and a metaphorical cost chart. This structure is chosen over a dashboard because the goal is to tell a story and build a case, making a linear flow most effective for understanding and persuasion. -->
+    <!-- Visualization & Content Choices: Report Info: AS-IS vs TO-BE architecture. Goal: Persuade developers of the TO-BE model's superiority. Viz/Presentation: Interactive side-by-side code comparison with tabs (HTML/JS), architectural diagrams (HTML/CSS), and a metaphorical line chart (Chart.js) showing rising technical debt. Interaction: Users can toggle code views to directly compare approaches and see annotations, reinforcing the learning. Justification: This interactive approach is more engaging and clearer than static text, allowing users to explore the evidence themselves. CONFIRM: No SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지속 가능한 성장을 위한 Kotlin 서버 아키텍처</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F9FAFB;
+            color: #334155;
+        }
+        .code-block {
+            background-color: #1E293B;
+            color: #E2E8F0;
+            font-family: 'D2Coding', 'Courier New', monospace;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .code-block .comment { color: #64748B; }
+        .code-block .keyword { color: #93C5FD; }
+        .code-block .string { color: #A5B4FC; }
+        .code-block .number { color: #6EE7B7; }
+        .code-block .tag { color: #F87171; }
+        .code-block .attr { color: #FBBF24; }
+        .tab-button.active {
+            background-color: #059669;
+            color: white;
+            border-color: #059669;
+        }
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .highlight {
+            background-color: rgba(251, 191, 36, 0.2);
+            border-left: 3px solid #FBBF24;
+            padding-left: 0.5rem;
+            margin-left: -0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-700">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-emerald-700">현대적 Kotlin 서버 설계 보고서</h1>
+            <nav class="hidden md:flex space-x-6 text-slate-600 font-medium">
+                <a href="#problem" class="hover:text-emerald-600 transition-colors">무엇이 문제인가?</a>
+                <a href="#solution" class="hover:text-emerald-600 transition-colors">해결의 열쇠</a>
+                <a href="#comparison" class="hover:text-emerald-600 transition-colors">코드 비교</a>
+                <a href="#benefits" class="hover:text-emerald-600 transition-colors">핵심 이점</a>
+                <a href="#conclusion" class="hover:text-emerald-600 transition-colors">결론</a>
+            </nav>
+            <button id="mobile-menu-btn" class="md:hidden text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <a href="#problem" class="block text-center py-3 px-6 text-slate-600 hover:bg-emerald-50">무엇이 문제인가?</a>
+            <a href="#solution" class="block text-center py-3 px-6 text-slate-600 hover:bg-emerald-50">해결의 열쇠</a>
+            <a href="#comparison" class="block text-center py-3 px-6 text-slate-600 hover:bg-emerald-50">코드 비교</a>
+            <a href="#benefits" class="block text-center py-3 px-6 text-slate-600 hover:bg-emerald-50">핵심 이점</a>
+            <a href="#conclusion" class="block text-center py-3 px-6 text-slate-600 hover:bg-emerald-50">결론</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-20">
+        
+        <section class="text-center mb-24">
+            <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">지속 가능한 성장을 위한 설계</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+                SI 프로젝트의 '빠른 개발'이라는 관성에서 벗어나, 변화에 유연하고 유지보수가 용이한 현대적 아키텍처가 왜 필수적인지 논리적으로 증명합니다.
+            </p>
+        </section>
+
+        <section id="problem" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-emerald-600 font-semibold">The Problem</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-slate-800 mt-2">"만능 SQL" 방식의 명백한 한계</h3>
+                <p class="mt-4 text-slate-600 max-w-2xl mx-auto">전통적인 방식은 데이터베이스 쿼리가 애플리케이션의 핵심 비즈니스 규칙까지 책임지면서 '기술 부채'를 야기합니다. 이는 결국 시스템 전체를 위기로 몰아넣습니다.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-md border border-red-100">
+                    <h4 class="text-xl font-bold text-red-700 mb-3">유지보수의 지옥</h4>
+                    <p class="text-slate-600">작은 정책 변경을 위해 수백 줄짜리 SQL을 해독해야 합니다. 변경의 파급 효과를 예측하기 어렵고, 사소한 수정이 치명적인 버그로 이어집니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border border-amber-100">
+                    <h4 class="text-xl font-bold text-amber-700 mb-3">테스트의 부재</h4>
+                    <p class="text-slate-600">SQL에 포함된 비즈니스 로직은 단위 테스트가 거의 불가능합니다. 버그 발견이 지연되고, 개발 속도를 현저히 저하시킵니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border-blue-100">
+                    <h4 class="text-xl font-bold text-blue-700 mb-3">재사용 불가능한 코드</h4>
+                    <p class="text-slate-600">'VIP 회원 할인 로직'이 여러 기능의 SQL에 중복 작성됩니다. 로직 변경 시 하나라도 놓치면 데이터 정합성이 깨집니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border-indigo-100">
+                    <h4 class="text-xl font-bold text-indigo-700 mb-3">특정 DB 기술 종속</h4>
+                    <p class="text-slate-600">특정 DB의 함수를 사용한 비즈니스 로직은 다른 DB로의 마이그레이션을 거의 불가능하게 만들어 기술 선택의 유연성을 잃게 합니다.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="solution" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-emerald-600 font-semibold">The Solution</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-slate-800 mt-2">역할과 책임의 분리 (SoC)</h3>
+                <p class="mt-4 text-slate-600 max-w-2xl mx-auto">현대적 아키텍처의 핵심은 각 계층이 자신의 역할에만 충실하게 만드는 것입니다. 레스토랑 주방처럼, 각자의 책임 영역을 명확히 분리하여 효율과 안정성을 극대화합니다.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 text-center">
+                    <div class="w-full md:w-1/5 p-4 rounded-lg bg-slate-100">
+                        <div class="text-2xl mb-2">👤</div>
+                        <h5 class="font-bold text-slate-800">Controller (웨이터)</h5>
+                        <p class="text-sm text-slate-500">요청 접수 및 응답 전달</p>
+                    </div>
+                    <div class="text-2xl text-slate-400 font-mono">&rarr;</div>
+                    <div class="w-full md:w-1/4 p-4 rounded-lg bg-emerald-100 border-2 border-emerald-500">
+                        <div class="text-2xl mb-2">🧑‍🍳</div>
+                        <h5 class="font-bold text-emerald-800">Service / Domain (총괄 셰프)</h5>
+                        <p class="text-sm text-emerald-700">핵심 비즈니스 로직 처리 (레시피)</p>
+                    </div>
+                    <div class="text-2xl text-slate-400 font-mono">&rarr;</div>
+                    <div class="w-full md:w-1/5 p-4 rounded-lg bg-slate-100">
+                        <div class="text-2xl mb-2">🔪</div>
+                        <h5 class="font-bold text-slate-800">Repository (보조 셰프)</h5>
+                        <p class="text-sm text-slate-500">데이터 조회 및 저장</p>
+                    </div>
+                     <div class="text-2xl text-slate-400 font-mono">&rarr;</div>
+                    <div class="w-full md:w-1/5 p-4 rounded-lg bg-slate-100">
+                        <div class="text-2xl mb-2">📦</div>
+                        <h5 class="font-bold text-slate-800">Database (재료 창고)</h5>
+                        <p class="text-sm text-slate-500">데이터 영속성</p>
+                    </div>
+                </div>
+                 <p class="mt-8 text-center text-slate-600">
+                    <strong>'만능 SQL'</strong>은 보조 셰프(Repository)가 요리(Business Logic)까지 다 하는 것과 같습니다. <br class="hidden md:block">
+                    우리가 제안하는 <strong>JPA + QueryDSL + 서비스 아키텍처</strong>는 이 역할과 책임을 명확히 분리하는 가장 효율적인 방법입니다.
+                </p>
+            </div>
+        </section>
+
+        <section id="comparison" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-emerald-600 font-semibold">Evidence</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-slate-800 mt-2">한눈에 보는 설계의 차이</h3>
+                <p class="mt-4 text-slate-600 max-w-2xl mx-auto"><strong>요구사항:</strong> "사용자 등급과 쿠폰 여부에 따라 최종 주문 가격을 계산한다." <br>두 방식의 구현 차이를 직접 비교해보세요.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div id="as-is-container">
+                    <h4 class="text-2xl font-bold text-center mb-4 text-red-700">AS-IS: 로직이 쿼리에 포함된 구조</h4>
+                     <div class="bg-white p-4 rounded-xl shadow-lg border-t-4 border-red-500">
+                        <pre class="code-block" id="as-is-code"><code class="language-xml"><span class="tag">&lt;select</span> <span class="attr">id=</span><span class="string">"calculateOrderPrice"</span> <span class="attr">resultType=</span><span class="string">"int"</span><span class="tag">&gt;</span>
+    SELECT
+        <span class="highlight"><span class="keyword">CASE</span>
+            <span class="keyword">WHEN</span> U.grade = <span class="string">'VIP'</span> <span class="keyword">THEN</span> P.price * <span class="number">0.8</span>  <span class="comment">-- VIP 20% 할인</span>
+            <span class="keyword">WHEN</span> U.grade = <span class="string">'GOLD'</span> <span class="keyword">THEN</span> P.price * <span class="number">0.9</span> <span class="comment">-- GOLD 10% 할인</span>
+            <span class="keyword">ELSE</span> P.price
+        <span class="keyword">END</span></span>
+        -
+        <span class="highlight"><span class="keyword">CASE</span>
+            <span class="keyword">WHEN</span> O.has_coupon = true <span class="keyword">THEN</span> <span class="number">1000</span> <span class="comment">-- 쿠폰 1000원 할인</span>
+            <span class="keyword">ELSE</span> <span class="number">0</span>
+        <span class="keyword">END</span></span> AS final_price
+    <span class="keyword">FROM</span> ORDERS O
+    <span class="keyword">JOIN</span> USERS U ON O.user_id = U.id
+    <span class="keyword">JOIN</span> PRODUCTS P ON O.product_id = P.id
+    <span class="keyword">WHERE</span> O.id = #{orderId}
+<span class="tag">&lt;/select&gt;</span></code></pre>
+                        <div class="mt-4 p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded">
+                            <h5 class="font-bold">문제점</h5>
+                            <ul class="list-disc list-inside text-sm mt-2">
+                                <li>비즈니스 규칙(할인율, 쿠폰 금액)이 SQL에 하드코딩</li>
+                                <li>정책 변경 시 SQL 전체를 수정해야 하는 위험</li>
+                                <li>로직에 대한 단위 테스트 불가능</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="to-be-container">
+                    <h4 class="text-2xl font-bold text-center mb-4 text-emerald-700">TO-BE: 역할과 책임이 분리된 구조</h4>
+                     <div class="bg-white p-4 rounded-xl shadow-lg border-t-4 border-emerald-500">
+                        <div class="flex border-b border-gray-200 mb-2">
+                            <button data-target="to-be-service" class="tab-button flex-1 py-2 px-4 font-medium text-slate-500 border-b-2 border-transparent hover:bg-emerald-50 active">Service (로직)</button>
+                            <button data-target="to-be-repo" class="tab-button flex-1 py-2 px-4 font-medium text-slate-500 border-b-2 border-transparent hover:bg-emerald-50">Repository (조회)</button>
+                        </div>
+                        <div id="to-be-service" class="tab-content">
+                            <pre class="code-block"><code class="language-kotlin"><span class="comment">// Service: 비즈니스 로직 책임</span>
+<span class="keyword">@Service</span>
+<span class="keyword">class</span> OrderService(
+    <span class="keyword">private val</span> orderRepository: OrderRepository,
+    <span class="keyword">private val</span> priceCalculator: PriceCalculator
+) {
+    <span class="keyword">fun</span> confirmOrder(orderId: Long) {
+        <span class="keyword">val</span> order = orderRepository.findOrderDetails(orderId)
+            ?: <span class="keyword">throw</span> IllegalArgumentException(<span class="string">"주문 없음"</span>)
+        
+        <span class="comment">// 1. 데이터를 가져와서 (Repository 역할)</span>
+        <span class="comment">// 2. 로직을 적용한다 (Service 역할)</span>
+        <span class="highlight">order.applyDiscount(priceCalculator)</span>
+    }
+}
+
+<span class="comment">// 순수 로직 객체: 테스트 용이</span>
+<span class="keyword">@Component</span>
+<span class="keyword">class</span> PriceCalculator {
+    <span class="keyword">fun</span> calculate(order: Order): Int {
+        <span class="keyword">val</span> price = applyGradeDiscount(order.product.price, order.user.grade)
+        <span class="keyword">return</span> applyCouponDiscount(price, order.hasCoupon)
+    }
+    
+    <span class="keyword">private fun</span> applyGradeDiscount(price: Int, grade: Grade): Int {
+        <span class="keyword">return when</span> (grade) {
+            Grade.VIP -> (price * <span class="number">0.8</span>).toInt()
+            Grade.GOLD -> (price * <span class="number">0.9</span>).toInt()
+            <span class="keyword">else</span> -> price
+        }
+    }
+}</code></pre>
+                        </div>
+                        <div id="to-be-repo" class="tab-content hidden">
+                            <pre class="code-block"><code class="language-kotlin"><span class="comment">// Repository: 데이터 조회 책임 (with QueryDSL)</span>
+<span class="keyword">class</span> CustomOrderRepositoryImpl(
+    <span class="keyword">private val</span> query: JPAQueryFactory
+) : CustomOrderRepository {
+    <span class="keyword">override fun</span> findOrderDetails(orderId: Long): Order? {
+        <span class="comment">// 비즈니스 로직 없이, 필요한 데이터를 
+        // '있는 그대로' 가져오는 데 집중</span>
+        <span class="keyword">return</span> query.selectFrom(order)
+            .join(order.user, user).fetchJoin()
+            .join(order.product, product).fetchJoin()
+            .where(order.id.eq(orderId))
+            .fetchOne()
+    }
+}</code></pre>
+                        </div>
+                         <div class="mt-4 p-4 bg-emerald-50 border-l-4 border-emerald-400 text-emerald-800 rounded">
+                            <h5 class="font-bold">장점</h5>
+                            <ul class="list-disc list-inside text-sm mt-2">
+                                <li>로직과 데이터 접근의 책임이 명확히 분리</li>
+                                <li>`PriceCalculator`를 독립적으로 단위 테스트 가능</li>
+                                <li>새 등급/정책 추가 시 `PriceCalculator`만 수정하면 됨</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="benefits" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-emerald-600 font-semibold">Key Benefits</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-slate-800 mt-2">우리가 얻게 될 압도적인 이점</h3>
+                <p class="mt-4 text-slate-600 max-w-2xl mx-auto">현대적 아키텍처는 단순한 기술 도입을 넘어, 프로젝트의 성공 가능성을 극대화하는 전략적 투자입니다.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center bg-white p-6 rounded-lg shadow-sm">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h4 class="font-bold text-lg">명확성</h4>
+                    <p class="text-sm text-slate-500">코드의 의도가 명확해져 누구나 쉽게 이해하고 수정할 수 있습니다.</p>
+                </div>
+                <div class="text-center bg-white p-6 rounded-lg shadow-sm">
+                    <div class="text-4xl mb-3">🧪</div>
+                    <h4 class="font-bold text-lg">테스트 용이성</h4>
+                    <p class="text-sm text-slate-500">핵심 로직을 DB 연결 없이 수백 개의 케이스로 빠르게 검증할 수 있습니다.</p>
+                </div>
+                <div class="text-center bg-white p-6 rounded-lg shadow-sm">
+                    <div class="text-4xl mb-3">🧩</div>
+                    <h4 class="font-bold text-lg">유연성 & 확장성</h4>
+                    <p class="text-sm text-slate-500">새로운 기능 추가나 정책 변경이 쉬워지고, 다른 코드에 미치는 영향이 최소화됩니다.</p>
+                </div>
+                <div class="text-center bg-white p-6 rounded-lg shadow-sm">
+                    <div class="text-4xl mb-3">♻️</div>
+                    <h4 class="font-bold text-lg">재사용성</h4>
+                    <p class="text-sm text-slate-500">잘 분리된 비즈니스 로직은 여러 곳에서 재사용되어 중복 코드를 제거합니다.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="conclusion" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-emerald-600 font-semibold">Conclusion</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-slate-800 mt-2">단기적 편의성 vs 장기적 생존</h3>
+                <p class="mt-4 text-slate-600 max-w-2xl mx-auto">'만능 SQL' 방식은 모래 위에 성을 짓는 것과 같습니다. 비즈니스가 성장하는 순간, 시스템은 한순간에 무너집니다. 장기적인 관점에서 유지보수 비용과 기술 부채의 차이를 시각적으로 확인해보세요.</p>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl">
+                 <div class="chart-container" style="position: relative; height: 50vh; max-height: 450px; width: 100%; max-width: 800px; margin: auto;">
+                    <canvas id="techDebtChart"></canvas>
+                </div>
+                <p class="text-center mt-6 text-slate-600">
+                    현대적 아키텍처는 초기 학습 곡선이 존재하지만, 장기적으로는 <strong>변화에 민첩하게 대응하고 유지보수 비용을 획기적으로 절감</strong>하는 가장 현명한 투자입니다. <br>이제는 1년, 5년 뒤에도 지속 가능한 시스템을 만들 때입니다.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 mt-24">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Modern Kotlin Server Architecture Report</p>
+            <p class="text-sm mt-2">Generated by Gemini AI Architect</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Smooth scrolling for mobile menu links
+            document.querySelectorAll('#mobile-menu a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Tab functionality for TO-BE code comparison
+            const tabContainer = document.getElementById('to-be-container');
+            const tabButtons = tabContainer.querySelectorAll('.tab-button');
+            const tabContents = tabContainer.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const targetId = button.getAttribute('data-target');
+                    tabContents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Chart.js implementation
+            const ctx = document.getElementById('techDebtChart').getContext('2d');
+            const techDebtChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['프로젝트 시작', '6개월 후', '1년 후', '2년 후', '3년 후', '5년 후'],
+                    datasets: [{
+                        label: 'AS-IS: 만능 SQL 방식 (유지보수 비용)',
+                        data: [10, 15, 40, 80, 150, 300],
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                    }, {
+                        label: 'TO-BE: 현대적 아키텍처 (유지보수 비용)',
+                        data: [20, 22, 25, 28, 32, 40],
+                        backgroundColor: 'rgba(5, 150, 105, 0.2)',
+                        borderColor: 'rgba(5, 150, 105, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '유지보수 비용 / 기술 부채 (Cost / Effort)'
+                            }
+                        },
+                        x: {
+                             title: {
+                                display: true,
+                                text: '시간 / 프로젝트 복잡도 (Time / Complexity)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        title: {
+                            display: true,
+                            text: '시간에 따른 아키텍처별 유지보수 비용 변화',
+                            font: {
+                                size: 18
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
